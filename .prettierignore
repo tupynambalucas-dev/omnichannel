@@ -1,0 +1,7 @@
+**/node_modules/**
+**/dist/**
+**/build/**
+**/.turbo/**
+**/.eslintcache
+pnpm-lock.yaml
+references/omnichannel-master-plan.md

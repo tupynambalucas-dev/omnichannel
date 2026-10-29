@@ -1,0 +1,55 @@
+{
+  "name": "@tupynambalucas-dev/omnichannel-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Stateless Fastify v5 unified webhook gateway, polymorphic outbound channel compiler, and BullMQ-backed deterministic FSM workflow engine for WhatsApp and Instagram.",
+  "author": "Tupynamba Lucas Development Team <contato@tupynambalucas.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://docs.tupynambalucas.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas-dev/omnichannel.git",
+    "directory": "api"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "dev": "tsx watch --env-file-if-exists=../.env src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tupynambalucas-dev/omnichannel-core": "workspace:*",
+    "@fastify/cors": "catalog:api-stack",
+    "@fastify/env": "catalog:api-stack",
+    "@fastify/helmet": "catalog:api-stack",
+    "@fastify/one-line-logger": "catalog:api-stack",
+    "@fastify/rate-limit": "catalog:api-stack",
+    "@sentry/node": "catalog:api-stack",
+    "bullmq": "catalog:api-stack",
+    "fastify": "catalog:api-stack",
+    "fastify-metrics": "catalog:api-stack",
+    "fastify-plugin": "catalog:api-stack",
+    "fastify-type-provider-zod": "catalog:api-stack",
+    "ioredis": "catalog:api-stack",
+    "mongoose": "catalog:api-stack",
+    "pg": "catalog:api-stack",
+    "pino-roll": "catalog:api-stack",
+    "zod": "catalog:shared-stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "catalog:api-stack",
+    "eslint": "catalog:tooling-stack",
+    "prettier": "catalog:tooling-stack",
+    "rimraf": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

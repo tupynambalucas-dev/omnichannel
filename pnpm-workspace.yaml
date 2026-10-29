@@ -1,0 +1,73 @@
+catalogMode: 'strict'
+shellEmulator: true
+
+peerDependencyRules:
+  ignoreMissing:
+    - eslint-plugin-import
+  allowAny:
+    - eslint
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild
+  - msgpackr-extract
+  - unrs-resolver
+
+packages:
+  - 'core'
+  - 'api'
+
+catalog:
+  '@types/node': ^26.6.6
+  typescript: ^6.0.3
+  tsx: ^4.23.15
+  rimraf: ^6.1.3
+  turbo: ^2.11.10
+  kill-port: ^2.0.1
+  husky: ^9.1.7
+  lint-staged: ^17.5.1
+
+catalogs:
+  tooling-stack:
+    '@eslint/js': ^10.0.1
+    '@typescript-eslint/eslint-plugin': ^8.72.1
+    eslint: ^10.13.0
+    eslint-config-prettier: ^10.1.8
+    eslint-import-resolver-typescript: ^4.4.5
+    eslint-plugin-import-x: ^4.17.1
+    eslint-plugin-prettier: ^5.5.7
+    jiti: ^2.7.0
+    prettier: ^3.9.10
+    typescript-eslint: ^8.72.1
+
+  shared-stack:
+    zod: ^4.6.7
+
+  api-stack:
+    '@fastify/cors': ^11.3.1
+    '@fastify/env': ^7.0.1
+    '@fastify/helmet': ^13.2.0
+    '@fastify/one-line-logger': ^2.2.1
+    '@fastify/rate-limit': ^11.2.1
+    '@sentry/node': ^11.10.0
+    '@types/pg': ^8.23.1
+    bullmq: ^6.5.1
+    fastify: ^5.12.7
+    fastify-metrics: ^14.1.1
+    fastify-plugin: ^6.0.1
+    fastify-type-provider-zod: ^7.0.0
+    ioredis: ^6.0.0
+    mongoose: ^9.11.4
+    pg: ^8.23.1
+    pino-roll: ^4.0.0
+
+  # Enterprise Agent Mesh Plugins (also published at https://npm.pkg.github.com/@tupynambalucas-dev/*)
+  plugins-stack:
+    '@tupynambalucas-dev/plugin-atelier': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/atelier'
+    '@tupynambalucas-dev/plugin-docusaurus': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/docusaurus'
+    '@tupynambalucas-dev/plugin-github-flow': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-flow'
+    '@tupynambalucas-dev/plugin-github-org': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-org'
+    '@tupynambalucas-dev/plugin-repo': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/repo'
+    '@tupynambalucas-dev/plugin-research': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/research'
+    '@tupynambalucas-dev/plugin-secrets': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/secrets'
+    '@tupynambalucas-dev/plugin-web': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/web'

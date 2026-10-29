@@ -1,0 +1,70 @@
+{
+  "name": "@tupynambalucas-dev/omnichannel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise multi-tenant omnichannel messaging gateway and deterministic FSM workflow engine for WhatsApp Cloud API and Instagram Messaging API.",
+  "author": "Tupynamba Lucas Development Team <contato@tupynambalucas.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://docs.tupynambalucas.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas-dev/omnichannel.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "dev": "kill-port 3000 && turbo run dev",
+    "build": "turbo run build",
+    "start": "pnpm --filter @tupynambalucas-dev/omnichannel-api start",
+    "lint": "turbo run lint",
+    "typecheck": "tsc -b && turbo run typecheck",
+    "clean": "turbo run clean && rimraf tsconfig.node.tsbuildinfo .turbo",
+    "api:dev": "kill-port 3000 && pnpm --filter @tupynambalucas-dev/omnichannel-api dev",
+    "api:build": "pnpm --filter @tupynambalucas-dev/omnichannel-api build",
+    "api:start": "pnpm --filter @tupynambalucas-dev/omnichannel-api start",
+    "api:lint": "pnpm --filter @tupynambalucas-dev/omnichannel-api lint",
+    "api:typecheck": "pnpm --filter @tupynambalucas-dev/omnichannel-api typecheck",
+    "core:dev": "pnpm --filter @tupynambalucas-dev/omnichannel-core dev",
+    "core:build": "pnpm --filter @tupynambalucas-dev/omnichannel-core build",
+    "core:lint": "pnpm --filter @tupynambalucas-dev/omnichannel-core lint",
+    "core:typecheck": "pnpm --filter @tupynambalucas-dev/omnichannel-core typecheck",
+    "format:check": "prettier --check --ignore-path .prettierignore .",
+    "format:write": "prettier --write --ignore-path .prettierignore ."
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:tooling-stack",
+    "@tupynambalucas-dev/plugin-atelier": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-docusaurus": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-github-flow": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-github-org": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-repo": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-research": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-secrets": "catalog:plugins-stack",
+    "@tupynambalucas-dev/plugin-web": "catalog:plugins-stack",
+    "@types/node": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:tooling-stack",
+    "eslint": "catalog:tooling-stack",
+    "eslint-config-prettier": "catalog:tooling-stack",
+    "eslint-import-resolver-typescript": "catalog:tooling-stack",
+    "eslint-plugin-import-x": "catalog:tooling-stack",
+    "eslint-plugin-prettier": "catalog:tooling-stack",
+    "husky": "catalog:",
+    "jiti": "catalog:tooling-stack",
+    "kill-port": "catalog:",
+    "lint-staged": "catalog:",
+    "prettier": "catalog:tooling-stack",
+    "rimraf": "catalog:",
+    "tsx": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:tooling-stack"
+  },
+  "lint-staged": {
+    "**/*.{js,mjs,ts}": [
+      "eslint --fix --no-warn-ignored"
+    ],
+    "**/*.{json,yaml,yml,md}": [
+      "prettier --write --ignore-path .prettierignore"
+    ]
+  }
+}

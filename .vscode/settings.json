@@ -1,0 +1,85 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.eslintcache": false,
+    "**/node_modules": false,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.turbo": true
+  },
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/.eslintcache": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true
+  },
+
+  /* --- ESLint Configuration --- */
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.options": {
+    "cache": true,
+    "cacheLocation": ".eslintcache"
+  },
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.lintTask.enable": true,
+  "eslint.probe": ["javascript", "typescript", "markdown"],
+
+  /* --- Editor & Prettier Formatting --- */
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on"
+  },
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": true,
+  "prettier.configPath": ".prettierrc.json",
+  "prettier.ignorePath": ".prettierignore",
+
+  /* --- Material Icon Theme --- */
+  "material-icon-theme.activeIconPack": "nest",
+  "material-icon-theme.folders.theme": "specific",
+
+  /* --- YAML Formatting --- */
+  "yaml.format.enable": true,
+  "yaml.format.singleQuote": false,
+  "yaml.format.bracketSpacing": true,
+  "yaml.format.proseWrap": "preserve",
+  "yaml.schemaStore.enable": true,
+  "yaml.disableSchemaDetection": ["**/.github/workflows/*.yml", "**/.github/workflows/*.yaml"],
+
+  /* --- Markdown Preview Enhanced --- */
+  "markdown-preview-enhanced.codeBlockTheme": "github-light.css",
+  "markdown-preview-enhanced.previewTheme": "github-light.css",
+  "markdown-preview-enhanced.enableWikiLinkSyntax": true,
+
+  /* --- TypeScript Workspace SDK --- */
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsserver.maxMemory": 4096,
+  "js/ts.tsserver.log": "off",
+  "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
+  "js/ts.suggest.autoImports": true,
+  "js/ts.preferences.includePackageJsonAutoImports": "auto",
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+  "js/ts.tsserver.experimental.enableProjectDiagnostics": false,
+
+  /* --- Miscellaneous --- */
+  "json.schemaDownload.enable": true,
+  "color-highlight.languages": ["*", "!json", "!yaml", "!markdown"]
+}

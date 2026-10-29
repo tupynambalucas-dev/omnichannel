@@ -1,0 +1,12 @@
+{
+  "entries": [
+    { "path": "node_modules/@tupynambalucas-dev/plugin-atelier" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-repo" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-github-flow" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-github-org" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-research" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-secrets" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-docusaurus" },
+    { "path": "node_modules/@tupynambalucas-dev/plugin-web" }
+  ]
+}

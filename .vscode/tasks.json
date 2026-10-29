@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Antigravity CLI (omnichannel)",
+      "type": "process",
+      "command": "wt.exe",
+      "windows": {
+        "command": "wt.exe",
+        "args": ["-d", "${workspaceFolder}", "powershell.exe", "-NoExit", "-Command", "agy"]
+      },
+      "osx": {
+        "command": "osascript",
+        "args": [
+          "-e",
+          "tell application \"Terminal\" to do script \"cd '${workspaceFolder}' && agy\""
+        ]
+      },
+      "linux": {
+        "command": "bash",
+        "args": [
+          "-c",
+          "nohup x-terminal-emulator -e bash -c 'cd \"${workspaceFolder}\" && agy; exec bash' >/dev/null 2>&1 &"
+        ]
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "close": true
+      }
+    },
+    {
+      "label": "Omnichannel: Dev Server",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Omnichannel: Build All",
+      "type": "shell",
+      "command": "pnpm build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Omnichannel: Typecheck",
+      "type": "shell",
+      "command": "pnpm typecheck",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Omnichannel: Lint",
+      "type": "shell",
+      "command": "pnpm lint",
+      "problemMatcher": ["$eslint-stylish"]
+    }
+  ]
+}

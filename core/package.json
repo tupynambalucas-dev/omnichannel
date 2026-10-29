@@ -1,0 +1,45 @@
+{
+  "name": "@tupynambalucas-dev/omnichannel-core",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canonical Zod v4 contracts, unified inbound envelope schemas, polymorphic UI descriptors, and deterministic FSM workflow schemas for @tupynambalucas-dev/omnichannel.",
+  "author": "Tupynamba Lucas Development Team <contato@tupynambalucas.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://docs.tupynambalucas.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tupynambalucas-dev/omnichannel.git",
+    "directory": "core"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "tsc",
+    "dev": "tsc -w",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "zod": "catalog:shared-stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint": "catalog:tooling-stack",
+    "prettier": "catalog:tooling-stack",
+    "rimraf": "catalog:",
+    "typescript": "catalog:"
+  }
+}
