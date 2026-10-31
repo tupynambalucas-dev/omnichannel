@@ -1,11 +1,12 @@
-import type {
-  CreateTenantRequest,
-  PublishWorkflowRequest,
-  RegisterChannelRequest,
-  TenantChannelRecord,
-  TenantRecord,
-  WorkflowDefinition,
-  WorkflowVersionRecord,
+import {
+  buildGuidedPrototypeWorkflow,
+  type CreateTenantRequest,
+  type PublishWorkflowRequest,
+  type RegisterChannelRequest,
+  type TenantChannelRecord,
+  type TenantRecord,
+  type WorkflowDefinition,
+  type WorkflowVersionRecord,
 } from '@tupynambalucas-dev/omnichannel-core';
 import type { TenantRepository } from './tenant.repository.js';
 
@@ -124,6 +125,16 @@ export class TenantService {
   ): Promise<WorkflowVersionRecord> {
     return this.repository.publishWorkflow(tenantId, {
       definition: buildStarterTriageWorkflow(),
+      activateForChannelAccountIds,
+    });
+  }
+
+  public async bootstrapGuidedPrototypeWorkflow(
+    tenantId: string,
+    activateForChannelAccountIds: string[],
+  ): Promise<WorkflowVersionRecord> {
+    return this.repository.publishWorkflow(tenantId, {
+      definition: buildGuidedPrototypeWorkflow(),
       activateForChannelAccountIds,
     });
   }
