@@ -6,3 +6,4 @@ export * from './schemas/ui-block.schema.js';
 export * from './schemas/workflow.schema.js';
 export * from './schemas/session.schema.js';
 export * from './schemas/tenant.schema.js';
+export * from './workflows/guided-prototype.workflow.js';

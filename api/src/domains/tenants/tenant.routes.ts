@@ -88,5 +88,21 @@ export function tenantRoutes(server: FastifyInstance): Promise<void> {
     server.tenantController.bootstrapStarterWorkflow,
   );
 
+  app.post(
+    '/:tenantId/workflows/guided-prototype',
+    {
+      schema: {
+        params: TenantIdParamsSchema,
+        body: z.object({
+          activateForChannelAccountIds: z.array(z.string().min(1)).default([]),
+        }),
+        response: {
+          201: WorkflowVersionRecordSchema,
+        },
+      },
+    },
+    server.tenantController.bootstrapGuidedPrototypeWorkflow,
+  );
+
   return Promise.resolve();
 }

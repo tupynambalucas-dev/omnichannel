@@ -62,4 +62,19 @@ export class TenantController {
     reply.status(201);
     return workflow;
   };
+
+  public bootstrapGuidedPrototypeWorkflow = async (
+    request: FastifyRequest<{
+      Params: { tenantId: string };
+      Body: { activateForChannelAccountIds: string[] };
+    }>,
+    reply: FastifyReply,
+  ): Promise<WorkflowVersionRecord> => {
+    const workflow = await this.service.bootstrapGuidedPrototypeWorkflow(
+      request.params.tenantId,
+      request.body.activateForChannelAccountIds,
+    );
+    reply.status(201);
+    return workflow;
+  };
 }
