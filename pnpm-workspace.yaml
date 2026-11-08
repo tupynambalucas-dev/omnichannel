@@ -61,13 +61,6 @@ catalogs:
     pg: ^8.23.1
     pino-roll: ^4.0.0
 
-  # Enterprise Agent Mesh Plugins (also published at https://npm.pkg.github.com/@tupynambalucas-dev/*)
+  # Enterprise Agent Mesh Plugins (git package distribution fallback & registry mirror)
   plugins-stack:
-    '@tupynambalucas-dev/plugin-atelier': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/atelier'
-    '@tupynambalucas-dev/plugin-docusaurus': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/docusaurus'
-    '@tupynambalucas-dev/plugin-github-flow': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-flow'
-    '@tupynambalucas-dev/plugin-github-org': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-org'
-    '@tupynambalucas-dev/plugin-repo': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/repo'
-    '@tupynambalucas-dev/plugin-research': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/research'
-    '@tupynambalucas-dev/plugin-secrets': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/secrets'
-    '@tupynambalucas-dev/plugin-web': 'github:tupynambalucas-dev/agent-mesh#path:plugins/packages/web'
+    '@tupynambalucas-dev/agent-mesh': 'github:tupynambalucas-dev/agent-mesh'

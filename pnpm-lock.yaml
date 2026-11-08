@@ -80,30 +80,9 @@ catalogs:
       specifier: ^6.0.3
       version: 6.0.3
   plugins-stack:
-    '@tupynambalucas-dev/plugin-atelier':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/atelier
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-docusaurus':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/docusaurus
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-github-flow':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-flow
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-github-org':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/github-org
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-repo':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/repo
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-research':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/research
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-secrets':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/secrets
-      version: 1.0.0
-    '@tupynambalucas-dev/plugin-web':
-      specifier: github:tupynambalucas-dev/agent-mesh#path:plugins/packages/web
-      version: 1.0.0
+    '@tupynambalucas-dev/agent-mesh':
+      specifier: github:tupynambalucas-dev/agent-mesh
+      version: 1.1.0
   shared-stack:
     zod:
       specifier: ^4.6.7
@@ -147,30 +126,9 @@ importers:
       '@eslint/js':
         specifier: catalog:tooling-stack
         version: 10.0.1(eslint@10.13.0(jiti@2.7.0))
-      '@tupynambalucas-dev/plugin-atelier':
+      '@tupynambalucas-dev/agent-mesh':
         specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/atelier
-      '@tupynambalucas-dev/plugin-docusaurus':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/docusaurus
-      '@tupynambalucas-dev/plugin-github-flow':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-flow
-      '@tupynambalucas-dev/plugin-github-org':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-org
-      '@tupynambalucas-dev/plugin-repo':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/repo
-      '@tupynambalucas-dev/plugin-research':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/research
-      '@tupynambalucas-dev/plugin-secrets':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/secrets
-      '@tupynambalucas-dev/plugin-web':
-        specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/web
+        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -835,37 +793,9 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@tupynambalucas-dev/plugin-atelier@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/atelier':
-    resolution: {path: plugins/packages/atelier, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-docusaurus@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/docusaurus':
-    resolution: {path: plugins/packages/docusaurus, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-github-flow@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-flow':
-    resolution: {path: plugins/packages/github-flow, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-github-org@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-org':
-    resolution: {path: plugins/packages/github-org, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-repo@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/repo':
-    resolution: {path: plugins/packages/repo, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-research@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/research':
-    resolution: {path: plugins/packages/research, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-secrets@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/secrets':
-    resolution: {path: plugins/packages/secrets, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
-
-  '@tupynambalucas-dev/plugin-web@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/web':
-    resolution: {path: plugins/packages/web, tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183}
-    version: 1.0.0
+  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039':
+    resolution: {tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039}
+    version: 1.1.0
 
   '@turbo/darwin-64@2.11.10':
     resolution: {integrity: sha512-By4idRap5+nLnMuRzLB4qkOPRlvNdyY1ne4VJYDyUoUB11H94k7uif9mbe3JT8JSNXs1D68uMcBj6hJ/jMQRvA==}
@@ -2387,21 +2317,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@tupynambalucas-dev/plugin-atelier@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/atelier': {}
-
-  '@tupynambalucas-dev/plugin-docusaurus@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/docusaurus': {}
-
-  '@tupynambalucas-dev/plugin-github-flow@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-flow': {}
-
-  '@tupynambalucas-dev/plugin-github-org@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/github-org': {}
-
-  '@tupynambalucas-dev/plugin-repo@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/repo': {}
-
-  '@tupynambalucas-dev/plugin-research@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/research': {}
-
-  '@tupynambalucas-dev/plugin-secrets@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/secrets': {}
-
-  '@tupynambalucas-dev/plugin-web@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/af2bd4fe32dc3e4a85b6392285f03d02bc983183#path:plugins/packages/web': {}
+  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039': {}
 
   '@turbo/darwin-64@2.11.10':
     optional: true
