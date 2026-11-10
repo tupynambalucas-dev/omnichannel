@@ -82,7 +82,7 @@ catalogs:
   plugins-stack:
     '@tupynambalucas-dev/agent-mesh':
       specifier: github:tupynambalucas-dev/agent-mesh
-      version: 1.1.0
+      version: 1.2.0
   shared-stack:
     zod:
       specifier: ^4.6.7
@@ -128,7 +128,7 @@ importers:
         version: 10.0.1(eslint@10.13.0(jiti@2.7.0))
       '@tupynambalucas-dev/agent-mesh':
         specifier: catalog:plugins-stack
-        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039
+        version: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/9a97d5348b64cda1b753a3523e867034b59b8085
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -793,9 +793,9 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039':
-    resolution: {tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039}
-    version: 1.1.0
+  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/9a97d5348b64cda1b753a3523e867034b59b8085':
+    resolution: {tarball: https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/9a97d5348b64cda1b753a3523e867034b59b8085}
+    version: 1.2.0
 
   '@turbo/darwin-64@2.11.10':
     resolution: {integrity: sha512-By4idRap5+nLnMuRzLB4qkOPRlvNdyY1ne4VJYDyUoUB11H94k7uif9mbe3JT8JSNXs1D68uMcBj6hJ/jMQRvA==}
@@ -2317,7 +2317,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/99005f2dd2f8aa515dd24831a0ea226465fa7039': {}
+  '@tupynambalucas-dev/agent-mesh@https://codeload.github.com/tupynambalucas-dev/agent-mesh/tar.gz/9a97d5348b64cda1b753a3523e867034b59b8085': {}
 
   '@turbo/darwin-64@2.11.10':
     optional: true
