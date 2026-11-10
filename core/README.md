@@ -12,16 +12,17 @@ Shared Zod v4 domain contracts, canonical webhook normalization schemas, channel
 
 ## Exported Modules Catalog
 
-| Module                           | Primary Exports                                                                                     | Responsibility                                                                                            |
-| :------------------------------- | :-------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `src/constants.ts`               | `WHATSAPP_LIMITS`, `INSTAGRAM_LIMITS`, `META_ERROR_CODES`, `QUEUE_NAMES`, `GLOBAL_OPT_OUT_KEYWORDS` | Authoritative platform character caps, error code constants, and BullMQ queue identifiers.                |
-| `src/schemas/envelope.schema.ts` | `CanonicalInboundEnvelopeSchema`, `DeliveryStatusEventSchema`, `MetaWebhookPayloadSchema`           | Normalizes WhatsApp Cloud API and Instagram Messaging API events into a single canonical contract.        |
-| `src/schemas/ui-block.schema.ts` | `AbstractUiComponentSchema`, `OutboundDispatchJobSchema`                                            | Defines polymorphic UI blocks (`TEXT`, `QUICK_CHOICES`, `MENU_CHOICES`, `CTA_URL`, `CAROUSEL_CARDS`).     |
-| `src/schemas/workflow.schema.ts` | `WorkflowNodeSchema`, `WorkflowDefinitionSchema`                                                    | Validates the 7 deterministic FSM node types and enforces entry-node and unique-ID graph invariants.      |
-| `src/schemas/session.schema.ts`  | `ConversationSessionSchema`, `OptInAuditRecordSchema`                                               | Models versioned conversation checkpoints, 24-hour messaging windows, and LGPD/GDPR opt-in audit records. |
-| `src/schemas/tenant.schema.ts`   | `CreateTenantRequestSchema`, `RegisterChannelRequestSchema`, `PublishWorkflowRequestSchema`         | Validates multi-tenant onboarding, secret-reference channel bindings, and workflow publishing payloads.   |
-| `src/utils/uuidv7.ts`            | `generateUuidV7`                                                                                    | Generates RFC 9562 time-ordered UUIDv7 keys optimized for PostgreSQL B-Tree locality.                     |
-| `src/utils/validators.ts`        | `isValidBrazilianCpf`, `validateConversationalInput`                                                | Validates user-entered `CPF` (Modulo-11), `EMAIL`, `PHONE_E164`, `NUMERIC`, and custom `REGEX` inputs.    |
+| Module                                       | Primary Exports                                                                                     | Responsibility                                                                                            |
+| :------------------------------------------- | :-------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `src/constants.ts`                           | `WHATSAPP_LIMITS`, `INSTAGRAM_LIMITS`, `META_ERROR_CODES`, `QUEUE_NAMES`, `GLOBAL_OPT_OUT_KEYWORDS` | Authoritative platform character caps, error code constants, and BullMQ queue identifiers.                |
+| `src/schemas/envelope.schema.ts`             | `CanonicalInboundEnvelopeSchema`, `DeliveryStatusEventSchema`, `MetaWebhookPayloadSchema`           | Normalizes WhatsApp Cloud API and Instagram Messaging API events into a single canonical contract.        |
+| `src/schemas/ui-block.schema.ts`             | `AbstractUiComponentSchema`, `OutboundDispatchJobSchema`                                            | Defines polymorphic UI blocks (`TEXT`, `QUICK_CHOICES`, `MENU_CHOICES`, `CTA_URL`, `CAROUSEL_CARDS`).     |
+| `src/schemas/workflow.schema.ts`             | `WorkflowNodeSchema`, `WorkflowDefinitionSchema`                                                    | Validates the 7 deterministic FSM node types and enforces entry-node and unique-ID graph invariants.      |
+| `src/schemas/session.schema.ts`              | `ConversationSessionSchema`, `OptInAuditRecordSchema`                                               | Models versioned conversation checkpoints, 24-hour messaging windows, and LGPD/GDPR opt-in audit records. |
+| `src/schemas/tenant.schema.ts`               | `CreateTenantRequestSchema`, `RegisterChannelRequestSchema`, `PublishWorkflowRequestSchema`         | Validates multi-tenant onboarding, secret-reference channel bindings, and workflow publishing payloads.   |
+| `src/utils/uuidv7.ts`                        | `generateUuidV7`                                                                                    | Generates RFC 9562 time-ordered UUIDv7 keys optimized for PostgreSQL B-Tree locality.                     |
+| `src/utils/validators.ts`                    | `isValidBrazilianCpf`, `validateConversationalInput`                                                | Validates user-entered `CPF` (Modulo-11), `EMAIL`, `PHONE_E164`, `NUMERIC`, and custom `REGEX` inputs.    |
+| `src/workflows/guided-prototype.workflow.ts` | `buildGuidedPrototypeWorkflow`                                                                      | Enterprise guided conversational prototype featuring CPF validation and interactive checkbox list menus.  |
 
 ---
 
