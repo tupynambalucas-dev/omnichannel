@@ -24,18 +24,18 @@ All 10 domain plugins and 8 sovereign MCP servers are discovered simultaneously 
 
 ## Configured Domain Plugins
 
-| Plugin | Capabilities | Sovereign MCP Server |
-| :--- | :--- | :--- |
-| `appsheet` | Relational schemas, key formulas, Playwright Studio automation | `mcp-appsheet` via `scripts/launcher.cjs` |
-| `atelier` | Context routers (`AGENTS.md`), skills, rules, hooks, plugin manifests | Self-contained (no MCP) |
-| `docusaurus` | Diátaxis taxonomy, Markdown/MDX auditing and scaffolding | Self-contained (no MCP) |
-| `github-flow` | Conventional Commits, SSH commit signing, pull requests, Actions | `mcp-github-flow` via `scripts/launcher.cjs` |
-| `github-org` | Organization repository provisioning, branch rulesets, security | `mcp-github-org` via `scripts/launcher.cjs` |
-| `gwork` | Google Sheets normalization, Drive file operations, Docs export | `mcp-gwork` via `scripts/launcher.cjs` |
-| `repo` | Monorepo catalogs, Solution TSConfig references, licensing | Self-contained (no MCP) |
-| `research` | Upstream library documentation via Context7, Firecrawl scraping | `mcp-firecrawl` via `scripts/launcher.cjs` |
-| `secrets` | Infisical Cloud secret injection, Universal Auth, secret hygiene | `mcp-infisical` via `scripts/launcher.cjs` |
-| `web` | Headless and interactive Playwright browser verification | `mcp-playwright` via `scripts/launcher.cjs` |
+| Plugin        | Capabilities                                                          | Sovereign MCP Server                         |
+| :------------ | :-------------------------------------------------------------------- | :------------------------------------------- |
+| `appsheet`    | Relational schemas, key formulas, Playwright Studio automation        | `mcp-appsheet` via `scripts/launcher.cjs`    |
+| `atelier`     | Context routers (`AGENTS.md`), skills, rules, hooks, plugin manifests | Self-contained (no MCP)                      |
+| `docusaurus`  | Diátaxis taxonomy, Markdown/MDX auditing and scaffolding              | Self-contained (no MCP)                      |
+| `github-flow` | Conventional Commits, SSH commit signing, pull requests, Actions      | `mcp-github-flow` via `scripts/launcher.cjs` |
+| `github-org`  | Organization repository provisioning, branch rulesets, security       | `mcp-github-org` via `scripts/launcher.cjs`  |
+| `gwork`       | Google Sheets normalization, Drive file operations, Docs export       | `mcp-gwork` via `scripts/launcher.cjs`       |
+| `repo`        | Monorepo catalogs, Solution TSConfig references, licensing            | Self-contained (no MCP)                      |
+| `research`    | Upstream library documentation via Context7, Firecrawl scraping       | `mcp-firecrawl` via `scripts/launcher.cjs`   |
+| `secrets`     | Infisical Cloud secret injection, Universal Auth, secret hygiene      | `mcp-infisical` via `scripts/launcher.cjs`   |
+| `web`         | Headless and interactive Playwright browser verification              | `mcp-playwright` via `scripts/launcher.cjs`  |
 
 ---
 
