@@ -77,4 +77,39 @@ export class TenantController {
     reply.status(201);
     return workflow;
   };
+
+  public bootstrapStandardWorkflow = async (
+    request: FastifyRequest<{
+      Params: { tenantId: string };
+      Body: { activateForChannelAccountIds: string[] };
+    }>,
+    reply: FastifyReply,
+  ): Promise<WorkflowVersionRecord> => {
+    const workflow = await this.service.bootstrapStandardOnboardingWorkflow(
+      request.params.tenantId,
+      request.body.activateForChannelAccountIds,
+    );
+    reply.status(201);
+    return workflow;
+  };
+
+  public bootstrapDefaultEnterpriseTenant = async (
+    request: FastifyRequest<{
+      Body?: { channelAccountId?: string; accessTokenSecretRef?: string };
+    }>,
+    reply: FastifyReply,
+  ): Promise<{
+    tenant: TenantRecord;
+    channel: TenantChannelRecord;
+    workflow: WorkflowVersionRecord;
+  }> => {
+    const channelAccountId = request.body?.channelAccountId ?? '106540352242922';
+    const accessTokenSecretRef = request.body?.accessTokenSecretRef ?? 'META_GRAPH_ACCESS_TOKEN';
+    const result = await this.service.ensureDefaultEnterpriseTenant(
+      channelAccountId,
+      accessTokenSecretRef,
+    );
+    reply.status(200);
+    return result;
+  };
 }

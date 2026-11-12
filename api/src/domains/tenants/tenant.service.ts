@@ -1,5 +1,6 @@
 import {
   buildGuidedPrototypeWorkflow,
+  buildStandardOnboardingWorkflow,
   type CreateTenantRequest,
   type PublishWorkflowRequest,
   type RegisterChannelRequest,
@@ -137,5 +138,45 @@ export class TenantService {
       definition: buildGuidedPrototypeWorkflow(),
       activateForChannelAccountIds,
     });
+  }
+
+  public async bootstrapStandardOnboardingWorkflow(
+    tenantId: string,
+    activateForChannelAccountIds: string[],
+  ): Promise<WorkflowVersionRecord> {
+    return this.repository.publishWorkflow(tenantId, {
+      definition: buildStandardOnboardingWorkflow(),
+      activateForChannelAccountIds,
+    });
+  }
+
+  public async ensureDefaultEnterpriseTenant(
+    channelAccountId: string,
+    accessTokenSecretRef = 'META_GRAPH_ACCESS_TOKEN',
+  ): Promise<{
+    tenant: TenantRecord;
+    channel: TenantChannelRecord;
+    workflow: WorkflowVersionRecord;
+  }> {
+    const defaultSlug = 'tupynamba-lucas-enterprise';
+    const existingTenants = await this.listTenants();
+    let tenant = existingTenants.find((t) => t.slug === defaultSlug);
+
+    tenant ??= await this.createTenant({
+      slug: defaultSlug,
+      displayName: 'Tupynamba Lucas Enterprise Suite',
+      timezone: 'America/Sao_Paulo',
+    });
+
+    const channel = await this.registerChannel(tenant.id, {
+      channel: 'whatsapp',
+      channelAccountId,
+      displayHandle: `whatsapp:${channelAccountId}`,
+      accessTokenSecretRef,
+    });
+
+    const workflow = await this.bootstrapStandardOnboardingWorkflow(tenant.id, [channelAccountId]);
+
+    return { tenant, channel, workflow };
   }
 }
