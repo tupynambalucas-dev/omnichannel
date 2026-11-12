@@ -29,8 +29,17 @@ This document is the Layer-1 context router for AI agents operating inside the `
    - All commits MUST follow Conventional Commits v1.0.0 and be cryptographically signed with SSH (`git commit -S -m "..."`).
    - Emojis are strictly forbidden across code, logs, documentation, commit messages, and agent responses.
 
+## Architectural Plans & Artifact Dual-Storage Standard
+
+Architectural blueprints, technical analyses, and master plans follow strict enterprise storage standards:
+- **Storage Location**: Blueprints, analyses, and reports reside in `plans/<artifact-slug>/` (or `plans/<artifact-slug>.md`), with `.agents/plans/<artifact-slug>/` fully recognized for backward compatibility.
+- **Topologies**: Topology 1 (Single-File Artifact) for atomic refactors, analyses, and reports; Topology 2 (Multi-Artifact Suite) for multi-domain frameworks with master `README.md` and numbered domain documents.
+- **Dual-Storage Invariant**: Whenever an agent creates an architectural plan, analysis, or report artifact in the Antigravity conversation directory (`<appDataDir>/brain/<conversation-id>/`), an identical synchronized copy MUST ALWAYS be mirrored in `plans/<artifact-slug>/` (or `plans/<artifact-slug>.md`).
+- **Ignore & Index Triad**: All repositories ignore `plans/` and `.agents/plans/` in `.gitignore`, while explicitly un-ignoring them in `.ignore` and `.rgignore` (`!plans/`, `!plans/**`, `!.agents/plans/`, `!.agents/plans/**`) and setting `"search.useIgnoreFiles": false` in `.vscode/settings.json` so files can always be attached with `@`.
+
 ## Required Skills
 
+- **`plan-architect`**: Active when designing, structuring, authoring, or auditing architectural plans, technical analyses, and governance reports following the dual-storage standard.
 - **`monorepo-architect`**: Active when modifying `pnpm-workspace.yaml`, `package.json`, `turbo.json`, or `tsconfig*.json`.
 - **`router-architect`**: Active when creating or updating any `AGENTS.md` file.
 - **`readme-architect`**: Active when creating or updating any `README.md` file.
