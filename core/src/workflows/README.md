@@ -8,9 +8,10 @@ The workflows defined in this directory are exported as type-safe data structure
 
 ## Available Workflows
 
-| Workflow Key                  | Export Function                  | Description                                                                                                               |
-| :---------------------------- | :------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `enterprise-guided-prototype` | `buildGuidedPrototypeWorkflow()` | Guided customer service flow featuring CPF Modulo-11 validation, interactive checkbox/list menus, and specialist handoff. |
+| Workflow Key                     | Export Function                     | Description                                                                                                                |
+| :------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `enterprise-standard-onboarding` | `buildStandardOnboardingWorkflow()` | Official production onboarding & commercial triage with CPF Modulo-11 validation, WhatsApp interactive lists, and handoff. |
+| `enterprise-guided-prototype`    | `buildGuidedPrototypeWorkflow()`    | Guided customer service flow featuring CPF Modulo-11 validation, interactive checkbox/list menus, and specialist handoff.  |
 
 ## Architectural Invariants
 

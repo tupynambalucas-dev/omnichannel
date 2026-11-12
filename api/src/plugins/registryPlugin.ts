@@ -98,6 +98,24 @@ const registryPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   server.decorate('tenantController', tenantController);
   server.decorate('webhookController', webhookController);
 
+  if (server.config.DEFAULT_TENANT_AUTO_BOOTSTRAP) {
+    try {
+      const defaultBootstrap = await tenantService.ensureDefaultEnterpriseTenant(
+        server.config.DEFAULT_WHATSAPP_PHONE_NUMBER_ID,
+      );
+      server.log.info(
+        {
+          tenantId: defaultBootstrap.tenant.id,
+          channelAccountId: defaultBootstrap.channel.channelAccountId,
+          workflowKey: defaultBootstrap.workflow.workflowKey,
+        },
+        'Bootstrapped default enterprise tenant and standard onboarding workflow.',
+      );
+    } catch (err: unknown) {
+      server.log.warn({ err }, 'Failed to auto-bootstrap default enterprise tenant; continuing.');
+    }
+  }
+
   server.get('/health', async (_request, reply) => {
     return reply.status(200).send({
       status: 'ok',

@@ -104,5 +104,43 @@ export function tenantRoutes(server: FastifyInstance): Promise<void> {
     server.tenantController.bootstrapGuidedPrototypeWorkflow,
   );
 
+  app.post(
+    '/:tenantId/workflows/standard',
+    {
+      schema: {
+        params: TenantIdParamsSchema,
+        body: z.object({
+          activateForChannelAccountIds: z.array(z.string().min(1)).default([]),
+        }),
+        response: {
+          201: WorkflowVersionRecordSchema,
+        },
+      },
+    },
+    server.tenantController.bootstrapStandardWorkflow,
+  );
+
+  app.post(
+    '/bootstrap-default',
+    {
+      schema: {
+        body: z
+          .object({
+            channelAccountId: z.string().optional(),
+            accessTokenSecretRef: z.string().optional(),
+          })
+          .optional(),
+        response: {
+          200: z.object({
+            tenant: TenantRecordSchema,
+            channel: TenantChannelRecordSchema,
+            workflow: WorkflowVersionRecordSchema,
+          }),
+        },
+      },
+    },
+    server.tenantController.bootstrapDefaultEnterpriseTenant,
+  );
+
   return Promise.resolve();
 }

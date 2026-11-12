@@ -16,6 +16,8 @@ export interface EnvConfig {
   MONGODB_ARCHIVE_ENABLED: boolean;
   MONGODB_URI: string;
   SENTRY_DSN: string;
+  DEFAULT_TENANT_AUTO_BOOTSTRAP: boolean;
+  DEFAULT_WHATSAPP_PHONE_NUMBER_ID: string;
 }
 
 export const envSchema = {
@@ -91,6 +93,14 @@ export const envSchema = {
     SENTRY_DSN: {
       type: 'string',
       default: '',
+    },
+    DEFAULT_TENANT_AUTO_BOOTSTRAP: {
+      type: 'boolean',
+      default: true,
+    },
+    DEFAULT_WHATSAPP_PHONE_NUMBER_ID: {
+      type: 'string',
+      default: '106540352242922',
     },
   },
 } as const;
