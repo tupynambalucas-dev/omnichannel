@@ -43,6 +43,7 @@ All 10 domain plugins and 8 sovereign MCP servers are discovered simultaneously 
 
 - [AGENTS.md](./AGENTS.md): Bounded context router for `.agents/`.
 - [plugins.json](./plugins.json): Antigravity runtime plugin discovery manifest.
+- [plans/](./plans/): Local planning container housing architectural plans, technical analyses, and audit reports.
 
 ---
 
