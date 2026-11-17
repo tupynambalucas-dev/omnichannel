@@ -13,6 +13,7 @@ This directory governs AI agent plugin consumption and local customization asset
 
 - [README.md](./README.md): Developer guide for consuming organizational plugins via the `@tupynambalucas-dev/agent-mesh` umbrella package.
 - [plugins.json](./plugins.json): Antigravity plugin discovery manifest referencing `@tupynambalucas-dev/agent-mesh/plugins/packages` under `node_modules/`.
+- [plans/](./plans/): Local planning container housing architectural plans, technical analyses, and audit reports.
 
 ## Architecture & Guardrails
 
