@@ -12,7 +12,7 @@ RUN corepack enable pnpm
 
 FROM base AS pruner
 WORKDIR /app
-RUN pnpm add -g turbo@latest
+RUN pnpm add -g turbo@2.11.10
 COPY . .
 RUN turbo prune @tupynambalucas-dev/omnichannel-api --docker
 

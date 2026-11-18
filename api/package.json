@@ -12,6 +12,9 @@
     "directory": "api"
   },
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "main": "./dist/index.js",
   "files": [
     "dist"

@@ -173,6 +173,7 @@ const queuePlugin: FastifyPluginAsync<QueuePluginDependencies> = (
     }),
     createOutboundDispatchWorker({
       connection,
+      outboundQueue,
       tenantRepository: deps.tenantRepository,
       metaGraphClient: deps.metaGraphClient,
       logger: server.log,
