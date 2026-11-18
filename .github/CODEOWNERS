@@ -1,0 +1,7 @@
+# Global owners for all files in this repository
+* @tupynambalucas-dev/core-maintainers
+
+# Security critical configurations
+/.github/workflows/ @tupynambalucas-dev/core-maintainers
+/pnpm-lock.yaml @tupynambalucas-dev/core-maintainers
+/package.json @tupynambalucas-dev/core-maintainers

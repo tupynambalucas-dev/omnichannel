@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig([
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
 
   // ==========================================================================
@@ -25,8 +25,8 @@ export default defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['eslint.config.ts', 'api/test/*.ts'],
-          noWarnOnMultipleProjects: true,
+          allowDefaultProject: ['api/test/*.ts'],
+          defaultProject: 'tsconfig.node.json',
         },
         tsconfigRootDir: __dirname,
         ecmaVersion: 'latest',
@@ -43,11 +43,12 @@ export default defineConfig([
       'import-x/resolver': {
         typescript: {
           alwaysTryTypes: true,
+          noWarnOnMultipleProjects: true,
           project: [
-            'tsconfig.json',
-            'tsconfig.node.json',
-            'core/tsconfig.json',
-            'api/tsconfig.json',
+            path.resolve(__dirname, 'tsconfig.json'),
+            path.resolve(__dirname, 'tsconfig.node.json'),
+            path.resolve(__dirname, 'core/tsconfig.json'),
+            path.resolve(__dirname, 'api/tsconfig.json'),
           ],
         },
         node: {
@@ -61,10 +62,24 @@ export default defineConfig([
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/no-unsafe-return': 'error',
+      '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/await-thenable': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'warn',
+      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/return-await': ['error', 'in-try-catch'],
+      '@typescript-eslint/no-unnecessary-condition': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/prefer-readonly': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowNumber: true,
+          allowBoolean: true,
+        },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -73,14 +88,11 @@ export default defineConfig([
           destructuredArrayIgnorePattern: '^_',
         },
       ],
-      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
       'no-debugger': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
       eqeqeq: ['error', 'always', { null: 'ignore' }],
-      '@typescript-eslint/require-await': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
-      '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
       '@typescript-eslint/consistent-type-imports': [
@@ -91,10 +103,19 @@ export default defineConfig([
           fixStyle: 'separate-type-imports',
         },
       ],
+      '@typescript-eslint/consistent-type-exports': [
+        'error',
+        {
+          fixMixedExportsWithInlineTypeSpecifier: true,
+        },
+      ],
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/naming-convention': 'off',
-      'import-x/no-duplicates': 'warn',
+      'import-x/no-duplicates': 'error',
       'import-x/no-unresolved': 'error',
+      'import-x/no-self-import': 'error',
+      'import-x/no-cycle': ['error', { maxDepth: 3 }],
       'import-x/order': 'off',
       'import-x/newline-after-import': 'off',
       'import-x/first': 'off',
@@ -115,6 +136,7 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
@@ -131,6 +153,54 @@ export default defineConfig([
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'error',
       '@typescript-eslint/strict-boolean-expressions': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'fastify',
+              message: 'Zero Infrastructure Coupling: core must never import fastify.',
+            },
+            {
+              name: 'pg',
+              message: 'Zero Infrastructure Coupling: core must never import pg.',
+            },
+            {
+              name: 'ioredis',
+              message: 'Zero Infrastructure Coupling: core must never import ioredis.',
+            },
+            {
+              name: 'bullmq',
+              message: 'Zero Infrastructure Coupling: core must never import bullmq.',
+            },
+            {
+              name: 'mongoose',
+              message: 'Zero Infrastructure Coupling: core must never import mongoose.',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '@fastify/*',
+                '@sentry/*',
+                'pino*',
+                '@tupynambalucas-dev/omnichannel-api',
+                '**/api/**',
+              ],
+              message:
+                'Zero Infrastructure Coupling: core must remain runtime-agnostic and never import API or infrastructure packages.',
+            },
+          ],
+        },
+      ],
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'process',
+          property: 'env',
+          message: 'Zero Infrastructure Coupling: core must never access process.env.',
+        },
+      ],
     },
   },
 
@@ -141,14 +211,43 @@ export default defineConfig([
     name: 'omnichannel/domain-api',
     files: ['api/**/*.ts'],
     rules: {
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+        },
+      ],
+      '@typescript-eslint/strict-boolean-expressions': [
+        'error',
+        {
+          allowString: false,
+          allowNumber: false,
+          allowNullableObject: true,
+          allowNullableBoolean: false,
+        },
+      ],
       '@typescript-eslint/no-misused-promises': [
         'error',
         {
           checksVoidReturn: false,
         },
       ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/core/src/**', '../core/**', '../../core/**', '../../../core/**'],
+              message:
+                'Package Boundary Violation: import from @tupynambalucas-dev/omnichannel-core public entrypoint instead of deep core paths.',
+            },
+          ],
+        },
+      ],
       'no-process-env': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 
@@ -159,6 +258,8 @@ export default defineConfig([
     name: 'omnichannel/test-files',
     files: ['**/*.{test,spec}.ts', '**/__tests__/**/*.ts'],
     rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',

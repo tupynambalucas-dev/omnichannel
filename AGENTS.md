@@ -2,46 +2,49 @@
 
 This document is the Layer-1 context router for AI agents operating inside the `tupynambalucas-dev/omnichannel` enterprise multi-tenant omnichannel messaging repository.
 
-## Workspace Navigation
+## Directory Layout
 
 - [README.md](./README.md): Primary developer documentation, architecture overview, and pipeline runbook.
-- [.agents/AGENTS.md](./.agents/AGENTS.md): Organizational AI plugin bindings (`plugins.json`) and customization guardrails.
-- [core/AGENTS.md](./core/AGENTS.md): Shared Zod v4 contracts (`@tupynambalucas-dev/omnichannel-core`), Canonical Inbound Envelope, Polymorphic UI Blocks, and FSM Workflow schemas.
-- [api/AGENTS.md](./api/AGENTS.md): Unified Fastify v5 Webhook Gateway (`@tupynambalucas-dev/omnichannel-api`), Polymorphic Channel Compiler, BullMQ Workers, and PostgreSQL RLS repositories.
-- [references/README.md](./references/README.md): Diátaxis architectural documentation hub, Meta for Developers tutorials, and cloud database setup guides.
+- [package.json](./package.json): Root workspace manifest, scripts, and tooling dependencies.
+- [pnpm-workspace.yaml](./pnpm-workspace.yaml): Centralized pnpm catalogs (`catalog:`, `tooling-stack`, `shared-stack`, `api-stack`, `plugins-stack`).
+- [eslint.config.ts](./eslint.config.ts): Flat-config `strictTypeChecked` ESLint ruleset and package boundary enforcement.
+- [turbo.json](./turbo.json): Turborepo build, lint, typecheck, and test task graph.
+- [tsconfig.base.json](./tsconfig.base.json) / [tsconfig.json](./tsconfig.json) / [tsconfig.node.json](./tsconfig.node.json): Solution-style TypeScript Project References.
+- [.env.example](./.env.example): Authoritative environment configuration template.
+- [.agents/AGENTS.md](./.agents/AGENTS.md): Layer-2 router for organizational AI plugin bindings (`plugins.json`) and local plans (`.agents/plans/`).
+- [core/AGENTS.md](./core/AGENTS.md): Layer-2 router for `@tupynambalucas-dev/omnichannel-core` (Zod v4 schemas, constants, validators, and FSM workflows).
+- [api/AGENTS.md](./api/AGENTS.md): Layer-2 router for `@tupynambalucas-dev/omnichannel-api` (Fastify v5 gateway, compiler, BullMQ workers, and PostgreSQL RLS repositories).
+- [references/AGENTS.md](./references/AGENTS.md): Layer-2 router for the Diátaxis engineering documentation hub (`references/`).
 
-## Architectural Invariants
+## Architecture & Pipeline
 
-1. **Unified Stateless Webhook Edge**:
-   - Both WhatsApp Cloud API (`whatsapp_business_account`) and Instagram Messaging API (`instagram`) webhooks terminate at `/webhooks/meta`.
-   - `X-Hub-Signature-256` HMAC-SHA256 verification MUST always run against raw unparsed request bytes (`request.rawBody`) using `crypto.timingSafeEqual`.
-2. **Deterministic FSM Engine**:
-   - Conversation flows execute strictly through Zod-validated JSONB Finite State Machine nodes (`SEND_MESSAGE`, `ASK_INTERACTIVE`, `ASK_TEXT_VALIDATED`, `HTTP_REQUEST`, `CONDITION_SWITCH`, `DELAY_TIMER`, `HUMAN_HANDOFF`).
-   - Interactive choices route exclusively on immutable `payloadId` strings, never brittle localized button titles.
-   - `HTTP_REQUEST` nodes MUST checkpoint session state prior to executing outbound external HTTP calls.
-3. **Cloud-First Persistence (Zero Local Docker Requirement)**:
-   - Primary transactional state lives in Cloud PostgreSQL (Neon / Supabase) with `FORCE ROW LEVEL SECURITY` scoped via `SELECT set_config('app.current_tenant_id', $1, true)`.
-   - Queue brokering (`REDIS_QUEUE_URL`, `noeviction`) and hot session/deduplication state (`REDIS_STATE_URL`, `volatile-ttl`) connect over TLS (`rediss://`) to cloud Redis providers.
-   - MongoDB Atlas (`MONGODB_ARCHIVE_ENABLED=true`) is strictly opt-in for unstructured raw webhook telemetry archiving.
-4. **Monorepo & Governance Standards**:
-   - All dependencies MUST resolve from `pnpm-workspace.yaml` catalogs (`catalog:`, `catalog:tooling-stack`, `catalog:shared-stack`, `catalog:api-stack`, `catalog:plugins-stack`).
-   - TypeScript builds use native Solution Project References (`tsconfig.base.json`, `tsconfig.json`, `tsconfig.node.json`, `core/tsconfig.json`, `api/tsconfig.json`). Legacy `tsconfig.build.json` files are prohibited.
-   - All commits MUST follow Conventional Commits v1.0.0 and be cryptographically signed with SSH (`git commit -S -m "..."`).
-   - Emojis are strictly forbidden across code, logs, documentation, commit messages, and agent responses.
+1. **Webhook Edge Ingestion (`POST /webhooks/meta`)**:
+   - Encapsulated raw-buffer content parser in [`api/src/domains/webhooks/webhook.routes.ts`](./api/src/domains/webhooks/webhook.routes.ts) captures unparsed UTF-8 bytes on `request.rawBody`.
+   - [`verifyMetaHmacSignature`](./api/src/domains/webhooks/webhook.security.ts) verifies `X-Hub-Signature-256` via constant-time `crypto.timingSafeEqual`.
+   - Channel adapters ([`whatsapp.adapter.ts`](./api/src/domains/webhooks/adapters/whatsapp.adapter.ts), [`instagram.adapter.ts`](./api/src/domains/webhooks/adapters/instagram.adapter.ts)) filter Instagram `is_echo` events, separate delivery `statuses`, and normalize inbound events into `CanonicalInboundEnvelope`.
+2. **Two-Layer Deduplication & Queue Dispatch**:
+   - [`WebhookService`](./api/src/domains/webhooks/webhook.service.ts) claims a 24-hour idempotency key (`SET dedup:msg:{channel}:{providerMessageId} 1 EX 86400 NX`) in State Redis and enqueues the envelope to `omnichannel-inbound-events` with BullMQ job deduplication.
+3. **Per-Conversation FIFO & Deterministic FSM Execution**:
+   - [`inbound-webhook.worker.ts`](./api/src/queues/inbound-webhook.worker.ts) acquires a per-conversation Redis mutex (`lock:conv:{conversationKey}`) and reschedules contended jobs by `250ms` via `job.moveToDelayed()`.
+   - [`WorkflowEngine`](./api/src/domains/workflow/workflow.engine.ts) loads or rehydrates `ConversationSession` from State Redis / Cloud PostgreSQL (scoped via `SELECT set_config('app.current_tenant_id', $1, true)`), evaluates global opt-out/reset/handoff keywords, executes deterministic nodes (`SEND_MESSAGE`, `ASK_INTERACTIVE`, `ASK_TEXT_VALIDATED`, `HTTP_REQUEST`, `CONDITION_SWITCH`, `DELAY_TIMER`, `HUMAN_HANDOFF`), and checkpoints state before outbound HTTP calls.
+4. **Polymorphic Compilation & Rate-Limited Delivery**:
+   - [`outbound.compiler.ts`](./api/src/domains/compiler/outbound.compiler.ts) compiles channel-neutral UI blocks (`TEXT`, `QUICK_CHOICES`, `MENU_CHOICES`, `CTA_URL`, `CAROUSEL_CARDS`) into native WhatsApp Cloud API or Instagram Messaging API payloads.
+   - [`outbound-dispatch.worker.ts`](./api/src/queues/outbound-dispatch.worker.ts) resolves tenant tokens at runtime from `process.env[accessTokenSecretRef]`, paces delivery, pauses the queue via `outboundQueue.rateLimit()` on error `130429`/`131056`/HTTP `429`, and halts permanently on `131026`, `131047`, or Instagram subcode `2534022`.
 
-## Architectural Plans & Artifact Dual-Storage Standard
+## Operational & Security Guardrails
 
-Architectural blueprints, technical analyses, and master plans follow strict enterprise storage standards:
-
-- **Storage Location**: Blueprints, analyses, and reports reside in `<target-repo>/.agents/plans/<artifact-slug>/` (or `<target-repo>/.agents/plans/<artifact-slug>.md`) within the respective repository for which the artifact is created. Creating a `plans/` directory at the root of any repository is strictly prohibited.
-- **Topologies**: Topology 1 (Single-File Artifact) for atomic refactors, analyses, and reports; Topology 2 (Multi-Artifact Suite) for multi-domain frameworks with master `README.md` and numbered domain documents.
-- **Dual-Storage Invariant**: Whenever an agent creates an architectural plan, analysis, or report artifact in the Antigravity conversation directory (`<appDataDir>/brain/<conversation-id>/`), an identical synchronized copy MUST ALWAYS be mirrored in `<target-repo>/.agents/plans/<artifact-slug>/` (or `<target-repo>/.agents/plans/<artifact-slug>.md`).
-- **Ignore & Index Triad**: All repositories ignore `.agents/plans/` in `.gitignore`, while explicitly un-ignoring it in `.ignore` and `.rgignore` (`!.agents/plans/`, `!.agents/plans/**`) and setting `"search.useIgnoreFiles": false` in `.vscode/settings.json` so files can always be attached with `@`.
+1. **Strict Package Boundaries**: `core` has zero infrastructure coupling (enforced by `no-restricted-imports` and `no-restricted-properties` in `eslint.config.ts`); `api` imports `core` strictly through `@tupynambalucas-dev/omnichannel-core`.
+2. **Cloud-First Persistence with Zero-Config Fallback**: Production connects to Cloud PostgreSQL (with `FORCE ROW LEVEL SECURITY`) and dual TLS Redis instances (`REDIS_QUEUE_URL` with `noeviction`; `REDIS_STATE_URL` with `volatile-ttl`). Leaving datastore URLs blank in development activates deterministic in-memory repositories and inline queue execution.
+3. **Secret Reference Resolution**: Never store plaintext tokens in PostgreSQL (`tenant_channels.access_token_secret_ref` stores only the environment variable name).
+4. **Architectural Plans Dual-Storage Standard**:
+   - Blueprints, technical analyses, and audit plans reside in `.agents/plans/<artifact-slug>.md` (Topology 1) or `.agents/plans/<artifact-slug>/` (Topology 2).
+   - Every plan artifact created in `<appDataDir>/brain/<conversation-id>/` MUST be mirrored identically in `.agents/plans/`.
+   - `.agents/plans/` is ignored by `.gitignore` and un-ignored in `.ignore` and `.rgignore` (`!.agents/plans/`, `!.agents/plans/**`) with `"search.useIgnoreFiles": false` in `.vscode/settings.json`.
 
 ## Required Skills
 
-- **`plan-architect`**: Active when designing, structuring, authoring, or auditing architectural plans, technical analyses, and governance reports following the dual-storage standard.
 - **`monorepo-architect`**: Active when modifying `pnpm-workspace.yaml`, `package.json`, `turbo.json`, or `tsconfig*.json`.
-- **`router-architect`**: Active when creating or updating any `AGENTS.md` file.
+- **`router-architect`**: Active when creating or updating any `AGENTS.md` file within the 3-layer ceiling.
 - **`readme-architect`**: Active when creating or updating any `README.md` file.
-- **`github-flow-operator`**: Active when staging, signing commits, or opening pull requests.
+- **`docusaurus-architect` / `docusaurus-mdx-architect` / `docusaurus-auditor`**: Active when maintaining Diátaxis documentation in `references/`.
+- **`github-standards-architect` / `github-flow-operator`**: Active when maintaining `.github/` workflows, staging changes, signing commits, or opening pull requests.

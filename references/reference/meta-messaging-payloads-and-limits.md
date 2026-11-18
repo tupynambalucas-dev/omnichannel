@@ -1,21 +1,22 @@
 # Reference: Meta Messaging Payloads, Limits, and Error Codes
 
-Technical reference for WhatsApp Cloud API (`v22.0+`) and Instagram Messaging API (`v22.0+`) wire schemas, platform structural constraints, and runtime error codes handled by `@tupynambalucas-dev/omnichannel`.
+Technical reference for WhatsApp Cloud API (`v22.0+`) and Instagram Messaging API (`v22.0+`) wire schemas, platform structural constraints, and runtime error codes handled by `@tupynambalucas-dev/omnichannel` ([`constants.ts`](../../core/src/constants.ts), [`ui-block.schema.ts`](../../core/src/schemas/ui-block.schema.ts), [`outbound.compiler.ts`](../../api/src/domains/compiler/outbound.compiler.ts), and [`meta-graph.client.ts`](../../api/src/domains/compiler/meta-graph.client.ts)).
 
 ---
 
 ## 1. Platform Structural Constraints Matrix
 
-| Constraint                | WhatsApp Cloud API                             | Instagram Messaging API                                          | Polymorphic Compiler Rule                                                                   |
-| :------------------------ | :--------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| **Customer Care Window**  | 24 hours from last user message                | 24 hours from last user message                                  | Outside 24h: WhatsApp requires approved Template; Instagram rejects with subcode `2534022`. |
-| **Max Text Body Length**  | `4,096` characters                             | `1,000` characters                                               | Truncate or split bodies exceeding channel ceiling.                                         |
-| **Direct Reply Buttons**  | Max `3` (`interactive.type: "button"`)         | Max `3` (`template_type: "button"`) or `13` (`quick_replies`)    | `1..3` options -> WhatsApp `button` / Instagram `quick_replies`.                            |
-| **Menu / List Selection** | `4..10` rows (`interactive.type: "list"`)      | Up to `13` pills (`quick_replies`)                               | `4..10` options -> auto-compiled to WhatsApp `list` and Instagram `quick_replies`.          |
-| **Option Title Length**   | `20` chars (`button`), `24` chars (`list` row) | `20` chars (`quick_replies` / `button`)                          | Enforce `<= 20` character label budget in `AbstractOptionSchema`.                           |
-| **External Link CTA**     | `interactive.type: "cta_url"`                  | `template_type: "button"` (`type: "web_url"`)                    | Compiled polymorphically from `CTA_URL` UI block.                                           |
-| **Carousel Cards**        | Multi-card interactive / template              | Max `10` cards (`template_type: "generic"`, title `<= 80` chars) | Validated against `MAX_GENERIC_CARDS = 10`.                                                 |
-| **Default Throughput**    | `80` msg/s (`20` msg/s in Coexistence mode)    | Subject to Graph API app-level rate limits                       | Controlled by BullMQ outbound rate limiter.                                                 |
+| Constraint                | WhatsApp Cloud API (`WHATSAPP_LIMITS`)                           | Instagram Messaging API (`INSTAGRAM_LIMITS`)                             | Polymorphic Compiler Rule (`compileOutboundMessages`)                                             |
+| :------------------------ | :--------------------------------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| **Customer Care Window**  | `MESSAGING_WINDOW_HOURS = 24`                                    | `MESSAGING_WINDOW_HOURS = 24`                                            | Checked via `session.windowExpiresAt`; expired Instagram windows fail with subcode `2534022`.     |
+| **Max Text Body Length**  | `MAX_BODY_TEXT_LENGTH = 1024` (interactive/schema ceiling)       | `MAX_TEXT_LENGTH = 1000`                                                 | Truncated automatically per channel limit in `outbound.compiler.ts`.                              |
+| **Direct Reply Buttons**  | `MAX_REPLY_BUTTONS = 3` (`interactive.type: "button"`)           | `MAX_TEMPLATE_BUTTONS = 3` (`button` template) or `13` quick replies     | `QUICK_CHOICES` (`1..3` options) -> WhatsApp `button` / Instagram `quick_replies`.                |
+| **Menu / List Selection** | `MAX_LIST_ROWS = 10` (`interactive.type: "list"`)                | `MAX_QUICK_REPLIES = 13` (`quick_replies`)                               | `QUICK_CHOICES` (`> 3` options) or `MENU_CHOICES` -> WhatsApp `list` / Instagram `quick_replies`. |
+| **Option Title Length**   | `MAX_BUTTON_TITLE_LENGTH = 20`, `MAX_LIST_ROW_TITLE_LENGTH = 24` | `MAX_QUICK_REPLY_TITLE_LENGTH = 20`                                      | Validated in `AbstractActionOptionSchema` and truncated at compile time if needed.                |
+| **Row Description**       | `MAX_LIST_ROW_DESCRIPTION_LENGTH = 72`                           | Not rendered in quick replies                                            | Included in WhatsApp `list` rows when present.                                                    |
+| **Header / Footer Text**  | `MAX_HEADER_TEXT_LENGTH = 60`, `MAX_FOOTER_TEXT_LENGTH = 60`     | Prepended/appended into message text body on Instagram                   | Native `header`/`footer` on WhatsApp; merged into text body on Instagram.                         |
+| **External Link CTA**     | `interactive.type: "cta_url"`                                    | `template_type: "button"` (`type: "web_url"`)                            | Compiled polymorphically from `CTA_URL` (`CtaUrlBlockSchema`).                                    |
+| **Carousel Cards**        | Text + `cta_url` fallback per card                               | `MAX_CAROUSEL_ELEMENTS = 10` (`template_type: "generic"`, title `<= 80`) | Validated against `INSTAGRAM_LIMITS.MAX_CAROUSEL_ELEMENTS` in `CarouselCardsBlockSchema`.         |
 
 ---
 
@@ -50,7 +51,7 @@ Technical reference for WhatsApp Cloud API (`v22.0+`) and Instagram Messaging AP
 }
 ```
 
-### 2.2 WhatsApp Interactive List (`4..10` Options)
+### 2.2 WhatsApp Interactive List (`MENU_CHOICES` or `QUICK_CHOICES` with `4..10` Options)
 
 ```json
 {
@@ -142,34 +143,36 @@ Technical reference for WhatsApp Cloud API (`v22.0+`) and Instagram Messaging AP
 
 ---
 
-## 3. Inbound Webhook Extraction Mapping
+## 3. Inbound Webhook Extraction Mapping (`CanonicalInboundEnvelope`)
 
-| Source Event                         | External Account ID              | Sender ID             | Message ID         | Immutable `payload` Field         | Visible `text` Field                 |
-| :----------------------------------- | :------------------------------- | :-------------------- | :----------------- | :-------------------------------- | :----------------------------------- |
-| WhatsApp `text`                      | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`) | `undefined`                       | `msg.text.body`                      |
-| WhatsApp `interactive.button_reply`  | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`) | `msg.interactive.button_reply.id` | `msg.interactive.button_reply.title` |
-| WhatsApp `interactive.list_reply`    | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`) | `msg.interactive.list_reply.id`   | `msg.interactive.list_reply.title`   |
-| WhatsApp Template `button`           | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`) | `msg.button.payload`              | `msg.button.text`                    |
-| Instagram `message` (text)           | `entry.id`                       | `messaging.sender.id` | `message.mid`      | `undefined`                       | `message.text`                       |
-| Instagram `message.quick_reply`      | `entry.id`                       | `messaging.sender.id` | `message.mid`      | `message.quick_reply.payload`     | `message.text`                       |
-| Instagram `postback`                 | `entry.id`                       | `messaging.sender.id` | `postback.mid`     | `postback.payload`                | `postback.title`                     |
-| Instagram `message.is_echo === true` | `entry.id`                       | `messaging.sender.id` | `message.mid`      | **Discarded at ingress**          | **Discarded at ingress**             |
+| Source Event                         | `channelAccountId`               | `endUserId`           | `providerMessageId` | `interactiveReply.payloadId`      | `text`                               |
+| :----------------------------------- | :------------------------------- | :-------------------- | :------------------ | :-------------------------------- | :----------------------------------- |
+| WhatsApp `text`                      | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`)  | `undefined`                       | `msg.text.body`                      |
+| WhatsApp `interactive.button_reply`  | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`)  | `msg.interactive.button_reply.id` | `msg.interactive.button_reply.title` |
+| WhatsApp `interactive.list_reply`    | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`)  | `msg.interactive.list_reply.id`   | `msg.interactive.list_reply.title`   |
+| WhatsApp Template `button`           | `value.metadata.phone_number_id` | `msg.from`            | `msg.id` (`wamid`)  | `msg.button.payload`              | `msg.button.text`                    |
+| Instagram `message` (text)           | `entry.id`                       | `messaging.sender.id` | `message.mid`       | `undefined`                       | `message.text`                       |
+| Instagram `message.quick_reply`      | `entry.id`                       | `messaging.sender.id` | `message.mid`       | `message.quick_reply.payload`     | `message.text`                       |
+| Instagram `postback`                 | `entry.id`                       | `messaging.sender.id` | `postback.mid`      | `postback.payload`                | `postback.title`                     |
+| Instagram `message.is_echo === true` | `entry.id`                       | `messaging.sender.id` | `message.mid`       | **Discarded at ingress**          | **Discarded at ingress**             |
 
 ---
 
-## 4. Meta Graph Error Classification
+## 4. Meta Graph Error Classification (`META_ERROR_CODES` & `MetaGraphDispatchError`)
 
-| Code / Subcode           | Channel          | Meaning                                             | Gateway Action                                                         |
-| :----------------------- | :--------------- | :-------------------------------------------------- | :--------------------------------------------------------------------- |
-| `130429` / HTTP `429`    | WhatsApp / Graph | Cloud API throughput rate limit exceeded            | Invoke `worker.rateLimit(duration)` + throw `Worker.RateLimitError()`. |
-| `131026`                 | WhatsApp         | Recipient undeliverable / not on WhatsApp / blocked | Mark contact undeliverable and throw `UnrecoverableError`.             |
-| `10` (subcode `2534022`) | Instagram        | Sent outside allowed 24-hour customer care window   | Expire active session window and throw `UnrecoverableError`.           |
-| `190`                    | Both             | Access token expired or revoked                     | Alert tenant channel status and halt dispatch.                         |
+| Code / Subcode                               | Constant                                            | Classification            | Outbound Worker Action (`outbound-dispatch.worker.ts`)                                   |
+| :------------------------------------------- | :-------------------------------------------------- | :------------------------ | :--------------------------------------------------------------------------------------- |
+| `130429` or HTTP `429`                       | `META_ERROR_CODES.WA_THROUGHPUT_LIMIT`              | `isRateLimitError = true` | Calls `await outboundQueue.rateLimit(retryAfterMs ?? 5000)` + `Worker.RateLimitError()`. |
+| `131056`                                     | `META_ERROR_CODES.WA_PAIR_RATE_LIMIT`               | `isRateLimitError = true` | Calls `await outboundQueue.rateLimit(retryAfterMs ?? 5000)` + `Worker.RateLimitError()`. |
+| `131026`                                     | `META_ERROR_CODES.WA_UNDELIVERABLE_OR_WINDOW`       | `isPermanentPolicyError`  | Logs warning and throws `UnrecoverableError` to abort futile retries.                    |
+| `131047`                                     | `META_ERROR_CODES.WA_REENGAGEMENT_REQUIRED`         | `isPermanentPolicyError`  | Logs warning and throws `UnrecoverableError` (24h window expired on WhatsApp).           |
+| `10` with subcode `2534022`                  | `IG_POLICY_VIOLATION` + `IG_OUTSIDE_WINDOW_SUBCODE` | `isPermanentPolicyError`  | Logs warning and throws `UnrecoverableError` (24h window expired on Instagram).          |
+| Any other HTTP `4xx` (`400..499`, not `429`) | —                                                   | `isPermanentPolicyError`  | Logs warning and throws `UnrecoverableError`.                                            |
 
 ---
 
 ## Canonical Upstream Sources
 
-- WhatsApp Cloud API — Interactive Messages Reference: `https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#interactive-messages`
-- WhatsApp Cloud API — Error Codes Reference: `https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes`
-- Instagram Messaging API — Quick Replies & Generic Templates: `https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/messaging-api`
+- WhatsApp Cloud API — Interactive Messages Reference: `https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#interactive-messages` (retrieved 2026-11-17)
+- WhatsApp Cloud API — Error Codes Reference: `https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes` (retrieved 2026-11-17)
+- Instagram Messaging API — Quick Replies & Generic Templates: `https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/messaging-api` (retrieved 2026-11-17)

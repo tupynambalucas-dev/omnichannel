@@ -8,6 +8,7 @@ import type {
   AbstractUiComponent,
   CanonicalInboundEnvelope,
   ConversationSession,
+  InteractiveTransition,
   OutboundDispatchJob,
   WorkflowDefinition,
   WorkflowNode,
@@ -418,7 +419,7 @@ export class WorkflowEngine {
   private resolveInteractiveSelection(
     node: Extract<WorkflowNode, { type: 'ASK_INTERACTIVE' }>,
     envelope: CanonicalInboundEnvelope,
-  ) {
+  ): InteractiveTransition | undefined {
     // Primary deterministic route: match immutable payload ID from button_reply / list_reply / quick_reply / postback
     if (envelope.interactiveReply !== undefined) {
       const byPayload = node.transitions.find(

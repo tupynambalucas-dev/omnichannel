@@ -1,7 +1,7 @@
 import { OutboundDispatchJobSchema, QUEUE_NAMES } from '@tupynambalucas-dev/omnichannel-core';
 import type { OutboundDispatchJob } from '@tupynambalucas-dev/omnichannel-core';
 import { UnrecoverableError, Worker } from 'bullmq';
-import type { ConnectionOptions } from 'bullmq';
+import type { ConnectionOptions, Queue } from 'bullmq';
 import type { FastifyBaseLogger } from 'fastify';
 import {
   MetaGraphDispatchError,
@@ -57,6 +57,7 @@ export async function executeOutboundDispatch(options: {
 
 export function createOutboundDispatchWorker(options: {
   connection: ConnectionOptions;
+  outboundQueue: Queue;
   tenantRepository: TenantRepository;
   metaGraphClient: MetaGraphClient;
   logger: FastifyBaseLogger;
@@ -76,7 +77,9 @@ export function createOutboundDispatchWorker(options: {
       } catch (error) {
         if (error instanceof MetaGraphDispatchError) {
           if (error.isRateLimitError) {
-            await worker.rateLimit(error.retryAfterMs ?? DEFAULT_RATE_LIMIT_PAUSE_MS);
+            await options.outboundQueue.rateLimit(
+              error.retryAfterMs ?? DEFAULT_RATE_LIMIT_PAUSE_MS,
+            );
             throw Worker.RateLimitError();
           }
 

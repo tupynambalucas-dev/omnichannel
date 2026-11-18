@@ -8,7 +8,7 @@ Configuration directory binding enterprise AI agent plugins, rules, and modular 
 
 Rather than duplicating rules or mounting Git submodules, `omnichannel` consumes sovereign domain plugins via the `@tupynambalucas-dev/agent-mesh` umbrella package managed through the `plugins-stack` catalog in [`pnpm-workspace.yaml`](../pnpm-workspace.yaml) and installed via the root [`package.json`](../package.json).
 
-All 10 domain plugins and 8 sovereign MCP servers are discovered simultaneously via the single entrypoint in [`plugins.json`](./plugins.json):
+All 10 domain plugins and 7 sovereign MCP servers are discovered simultaneously via the single entrypoint in [`plugins.json`](./plugins.json):
 
 ```json
 {
@@ -41,9 +41,9 @@ All 10 domain plugins and 8 sovereign MCP servers are discovered simultaneously 
 
 ## Directory Layout
 
-- [AGENTS.md](./AGENTS.md): Bounded context router for `.agents/`.
+- [AGENTS.md](./AGENTS.md): Layer-2 bounded context router for `.agents/`.
 - [plugins.json](./plugins.json): Antigravity runtime plugin discovery manifest.
-- [plans/](./plans/): Local planning container housing architectural plans, technical analyses, and audit reports.
+- [plans/](./plans/): Local planning container housing Topology-1 architectural plans and audit reports (`documentation-alignment-audit.md`, `standard-whatsapp-conversational-bot.md`).
 
 ---
 

@@ -227,6 +227,7 @@ describe('Tupynamba Lucas Enterprise - Standard WhatsApp Onboarding Conversation
 
     assert.equal(dispatchedJobs.length, 4);
     const job4 = dispatchedJobs[3];
+    assert.equal(job4.components[0].kind, 'TEXT');
     assert.ok(job4.components[0].body.includes('Modulo-11'));
 
     // --- TURN 5: User sends valid CPF ---
