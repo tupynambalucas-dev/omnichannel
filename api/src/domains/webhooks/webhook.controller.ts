@@ -43,7 +43,7 @@ export class WebhookController {
     const signatureHeader = request.headers['x-hub-signature-256'];
     const signature = typeof signatureHeader === 'string' ? signatureHeader : undefined;
 
-    if (this.appSecret.length > 0) {
+    if (this.appSecret.length > 0 || process.env.NODE_ENV === 'production') {
       const signatureValid = verifyMetaHmacSignature(request.rawBody, signature, this.appSecret);
 
       if (!signatureValid) {

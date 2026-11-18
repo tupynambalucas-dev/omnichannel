@@ -4,6 +4,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { WorkflowDefinitionSchema } from '@tupynambalucas-dev/omnichannel-core';
+import { z } from 'zod';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,7 +58,10 @@ describe('Documentation & Context-Router Alignment Verification', () => {
     }
   });
 
-  it('validates all JSON workflow examples in declarative-fsm-workflow-schema.md against WorkflowDefinitionSchema', () => {
+  it('validates all JSON workflow examples in declarative-fsm-workflow-schema.md against WorkflowDefinitionSchema and z.toJSONSchema()', () => {
+    const jsonSchema = z.toJSONSchema(WorkflowDefinitionSchema);
+    assert.equal(jsonSchema.type, 'object');
+
     const fsmDocPath = path.join(
       REPO_ROOT,
       'references/reference/declarative-fsm-workflow-schema.md',
@@ -75,25 +79,30 @@ describe('Documentation & Context-Router Alignment Verification', () => {
     }
   });
 
-  it('verifies PostgreSQL migration DDL tables and ON CONFLICT unique constraints match repositories', () => {
+  it('verifies PostgreSQL migration DDL tables, columns, and ON CONFLICT unique constraints match repositories', () => {
     const migrationPath = path.join(REPO_ROOT, 'api/migrations/0001_initial_schema.sql');
     const sql = fs.readFileSync(migrationPath, 'utf8');
 
-    const expectedTables = [
+    const expectedSnippets = [
       'CREATE TABLE IF NOT EXISTS tenants',
       'CREATE TABLE IF NOT EXISTS workflow_definitions',
       'CREATE TABLE IF NOT EXISTS tenant_channels',
       'CREATE TABLE IF NOT EXISTS conversation_sessions',
       'CREATE TABLE IF NOT EXISTS opt_in_audit_trail',
+      'UNIQUE (channel, channel_account_id)',
+      'UNIQUE (tenant_id, conversation_key)',
+      'UNIQUE (tenant_id, workflow_key, version)',
+      'access_token_secret_ref',
+      'active_workflow_id',
+      'invalid_attempts',
+      'state_version',
+      'evidence_metadata',
+      'FORCE ROW LEVEL SECURITY',
     ];
 
-    for (const tableStmt of expectedTables) {
-      assert.ok(sql.includes(tableStmt), `Missing "${tableStmt}" in 0001_initial_schema.sql`);
+    for (const snippet of expectedSnippets) {
+      assert.ok(sql.includes(snippet), `Missing "${snippet}" in 0001_initial_schema.sql`);
     }
-
-    assert.ok(sql.includes('UNIQUE (channel, channel_account_id)'));
-    assert.ok(sql.includes('UNIQUE (tenant_id, conversation_key)'));
-    assert.ok(sql.includes('access_token_secret_ref'));
   });
 
   it('verifies all relative Markdown links resolve to existing files on disk', () => {
@@ -131,6 +140,39 @@ describe('Documentation & Context-Router Alignment Verification', () => {
           `Broken relative link "${rawTarget}" in ${path.relative(REPO_ROOT, mdFile)}`,
         );
       }
+    }
+  });
+
+  it('enforces the stale-identifier denylist across references/ and the zero-emoji invariant', () => {
+    const referencesDir = path.join(REPO_ROOT, 'references');
+    const referenceFiles = collectMarkdownFiles(referencesDir);
+    const staleIdentifiers = [
+      'workflow_versions',
+      'access_token_enc',
+      'schemaVersion',
+      'externalMessageId',
+      'omnichannel-inbound-webhook',
+      'omnichannel-status-telemetry',
+      'verifyMetaHubSignature',
+      'MAX_GENERIC_CARDS',
+      'HUMAN_AGENT',
+      'OutboundChannelCompiler',
+      'omnichannel-master-plan',
+    ];
+
+    const emojiPattern = /[\u2600-\u27BF]|[\uD83C-\uD83E][\uDC00-\uDFFF]/;
+
+    for (const refFile of referenceFiles) {
+      const content = fs.readFileSync(refFile, 'utf8');
+      const relPath = path.relative(REPO_ROOT, refFile);
+      for (const stale of staleIdentifiers) {
+        assert.equal(
+          content.includes(stale),
+          false,
+          `Stale identifier "${stale}" found in ${relPath}`,
+        );
+      }
+      assert.equal(emojiPattern.test(content), false, `Emoji character found in ${relPath}`);
     }
   });
 });
