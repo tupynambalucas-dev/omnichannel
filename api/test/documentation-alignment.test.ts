@@ -121,6 +121,10 @@ describe('Documentation & Context-Router Alignment Verification', () => {
         }
 
         const resolvedPath = path.resolve(dir, target);
+        if (resolvedPath === path.join(REPO_ROOT, '.agents', 'plans')) {
+          // .agents/plans/ is intentionally gitignored in CI per Dual-Storage Invariant
+          continue;
+        }
         assert.equal(
           fs.existsSync(resolvedPath),
           true,
