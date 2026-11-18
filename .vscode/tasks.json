@@ -32,35 +32,6 @@
         "showReuseMessage": false,
         "close": true
       }
-    },
-    {
-      "label": "Omnichannel: Dev Server",
-      "type": "shell",
-      "command": "pnpm dev",
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Omnichannel: Build All",
-      "type": "shell",
-      "command": "pnpm build",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "problemMatcher": ["$tsc"]
-    },
-    {
-      "label": "Omnichannel: Typecheck",
-      "type": "shell",
-      "command": "pnpm typecheck",
-      "problemMatcher": ["$tsc"]
-    },
-    {
-      "label": "Omnichannel: Lint",
-      "type": "shell",
-      "command": "pnpm lint",
-      "problemMatcher": ["$eslint-stylish"]
     }
   ]
 }
