@@ -26,6 +26,7 @@
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",
+    "simulate:webhook": "tsx --env-file-if-exists=../.env scripts/simulate-webhook.ts",
     "lint": "eslint ."
   },
   "dependencies": {

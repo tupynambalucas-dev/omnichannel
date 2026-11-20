@@ -34,6 +34,40 @@ export type ScheduleDelayedTimerFn = (payload: DelayedTimerSchedulePayload) => P
 const MAX_AUTO_STEPS_PER_TURN = 25;
 const MESSAGING_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+function isDisallowedUrl(urlString: string): boolean {
+  try {
+    const parsed = new URL(urlString);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return true;
+    }
+    const hostname = parsed.hostname.toLowerCase();
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '::1' ||
+      hostname === '0.0.0.0' ||
+      hostname === '169.254.169.254' ||
+      hostname.endsWith('.internal') ||
+      hostname.endsWith('.local')
+    ) {
+      return true;
+    }
+    const ipMatch = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.exec(hostname);
+    if (ipMatch !== null) {
+      const b0 = Number(ipMatch[1]);
+      const b1 = Number(ipMatch[2]);
+      if (b0 === 10) return true;
+      if (b0 === 127) return true;
+      if (b0 === 169 && b1 === 254) return true;
+      if (b0 === 172 && b1 >= 16 && b1 <= 31) return true;
+      if (b0 === 192 && b1 === 168) return true;
+    }
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 export class WorkflowEngine {
   private readonly tenantRepository: TenantRepository;
   private readonly sessionRepository: SessionStateRepository;
@@ -560,43 +594,56 @@ export class WorkflowEngine {
           let nextNodeId: string | null;
           const updatedVariables: Record<string, unknown> = { ...session.variables };
 
-          try {
-            const serializedBody =
-              node.method !== 'GET' && node.bodyTemplate !== undefined
-                ? interpolateTemplate(JSON.stringify(node.bodyTemplate), session.variables)
-                : undefined;
-
-            const response = await fetch(resolvedUrl, {
-              method: node.method,
-              headers: resolvedHeaders,
-              body: serializedBody,
-              signal: AbortSignal.timeout(node.timeoutMs),
-            });
-
-            const textPayload = await response.text();
-            let parsedResponse: unknown = textPayload;
-            if (textPayload.length > 0) {
-              try {
-                parsedResponse = JSON.parse(textPayload) as unknown;
-              } catch {
-                parsedResponse = textPayload;
-              }
-            }
-
+          if (isDisallowedUrl(resolvedUrl)) {
+            this.logger.warn(
+              { sessionId: session.id, resolvedUrl },
+              'HTTP_REQUEST target rejected by SSRF guard.',
+            );
             updatedVariables[node.responseVariable] = {
-              status: response.status,
-              ok: response.ok,
-              data: parsedResponse,
-            };
-
-            nextNodeId = response.ok ? node.onSuccessNodeId : node.onErrorNodeId;
-          } catch (error) {
-            updatedVariables[node.responseVariable] = {
-              status: 0,
+              status: 403,
               ok: false,
-              error: error instanceof Error ? error.message : 'HTTP_REQUEST_ERROR',
+              error: 'SSRF_BLOCKED: URL target is not permitted.',
             };
             nextNodeId = node.onErrorNodeId;
+          } else {
+            try {
+              const serializedBody =
+                node.method !== 'GET' && node.bodyTemplate !== undefined
+                  ? interpolateTemplate(JSON.stringify(node.bodyTemplate), session.variables)
+                  : undefined;
+
+              const response = await fetch(resolvedUrl, {
+                method: node.method,
+                headers: resolvedHeaders,
+                body: serializedBody,
+                signal: AbortSignal.timeout(node.timeoutMs),
+              });
+
+              const textPayload = await response.text();
+              let parsedResponse: unknown = textPayload;
+              if (textPayload.length > 0) {
+                try {
+                  parsedResponse = JSON.parse(textPayload) as unknown;
+                } catch {
+                  parsedResponse = textPayload;
+                }
+              }
+
+              updatedVariables[node.responseVariable] = {
+                status: response.status,
+                ok: response.ok,
+                data: parsedResponse,
+              };
+
+              nextNodeId = response.ok ? node.onSuccessNodeId : node.onErrorNodeId;
+            } catch (error) {
+              updatedVariables[node.responseVariable] = {
+                status: 0,
+                ok: false,
+                error: error instanceof Error ? error.message : 'HTTP_REQUEST_ERROR',
+              };
+              nextNodeId = node.onErrorNodeId;
+            }
           }
 
           if (nextNodeId === null) {

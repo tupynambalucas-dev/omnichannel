@@ -72,6 +72,9 @@ export class MetaGraphClient {
   public resolveAccessToken(secretRef: string): string {
     const token = process.env[secretRef];
     if (token === undefined || token.trim().length === 0) {
+      if (process.env.META_GRAPH_MOCK_DISPATCH === 'true') {
+        return 'mock_meta_graph_token';
+      }
       throw new MetaGraphDispatchError({
         message: `Access token secret reference "${secretRef}" is not present in runtime environment.`,
         httpStatus: 401,
@@ -87,6 +90,17 @@ export class MetaGraphClient {
     request: CompiledProviderRequest,
     accessToken: string,
   ): Promise<MetaDispatchResult> {
+    if (
+      process.env.META_GRAPH_MOCK_DISPATCH === 'true' ||
+      accessToken === 'mock' ||
+      accessToken.startsWith('mock_')
+    ) {
+      return {
+        providerMessageId: `mock_wam_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        httpStatus: 200,
+      };
+    }
+
     const endpointUrl = `${this.baseUrl}/${this.apiVersion}/${encodeURIComponent(request.endpointAccountId)}/messages`;
 
     const response = await fetch(endpointUrl, {
@@ -141,5 +155,44 @@ export class MetaGraphClient {
       providerMessageId,
       httpStatus: response.status,
     };
+  }
+
+  /**
+   * Marks an incoming WhatsApp message as read to acknowledge receipt to the end-user (double blue checks).
+   */
+  public async markMessageAsRead(
+    endpointAccountId: string,
+    messageId: string,
+    accessToken: string,
+  ): Promise<boolean> {
+    if (
+      process.env.META_GRAPH_MOCK_DISPATCH === 'true' ||
+      accessToken === 'mock' ||
+      accessToken.startsWith('mock_')
+    ) {
+      return true;
+    }
+
+    const endpointUrl = `${this.baseUrl}/${this.apiVersion}/${encodeURIComponent(endpointAccountId)}/messages`;
+
+    try {
+      const response = await fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          status: 'read',
+          message_id: messageId,
+        }),
+        signal: AbortSignal.timeout(5000),
+      });
+
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 }

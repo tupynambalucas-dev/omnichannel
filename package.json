@@ -27,6 +27,8 @@
     "api:dev": "kill-port 3000 && pnpm --filter @tupynambalucas-dev/omnichannel-api dev",
     "api:build": "pnpm --filter @tupynambalucas-dev/omnichannel-api build",
     "api:test": "pnpm --filter @tupynambalucas-dev/omnichannel-api test",
+    "api:simulate": "pnpm --filter @tupynambalucas-dev/omnichannel-api simulate:webhook",
+    "tunnel:quick": "cloudflared tunnel --url http://localhost:3000",
     "api:start": "pnpm --filter @tupynambalucas-dev/omnichannel-api start",
     "api:lint": "pnpm --filter @tupynambalucas-dev/omnichannel-api lint",
     "api:typecheck": "pnpm --filter @tupynambalucas-dev/omnichannel-api typecheck",

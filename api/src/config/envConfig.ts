@@ -18,6 +18,7 @@ export interface EnvConfig {
   SENTRY_DSN: string;
   DEFAULT_TENANT_AUTO_BOOTSTRAP: boolean;
   DEFAULT_WHATSAPP_PHONE_NUMBER_ID: string;
+  META_GRAPH_MOCK_DISPATCH: boolean;
 }
 
 export const envSchema = {
@@ -101,6 +102,10 @@ export const envSchema = {
     DEFAULT_WHATSAPP_PHONE_NUMBER_ID: {
       type: 'string',
       default: '106540352242922',
+    },
+    META_GRAPH_MOCK_DISPATCH: {
+      type: 'boolean',
+      default: false,
     },
   },
 } as const;
