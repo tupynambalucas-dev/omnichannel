@@ -25,7 +25,7 @@ export default defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['api/test/*.ts'],
+          allowDefaultProject: ['api/test/*.ts', 'api/scripts/*.ts'],
           defaultProject: 'tsconfig.node.json',
         },
         tsconfigRootDir: __dirname,

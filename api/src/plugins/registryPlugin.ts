@@ -53,6 +53,7 @@ const registryPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   await server.register(fastifyRateLimit, {
     max: 600,
     timeWindow: '1 minute',
+    allowList: (req) => req.url.startsWith('/webhooks'),
   });
 
   await server.register(fastifyMetrics.default, {
