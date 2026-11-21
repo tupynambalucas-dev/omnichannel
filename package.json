@@ -16,7 +16,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "prepare": "husky",
+    "prepare": "lefthook install",
     "dev": "kill-port 3000 && turbo run dev",
     "build": "turbo run build",
     "start": "pnpm --filter @tupynambalucas-dev/omnichannel-api start",
@@ -59,23 +59,14 @@
     "eslint-import-resolver-typescript": "catalog:tooling-stack",
     "eslint-plugin-import-x": "catalog:tooling-stack",
     "eslint-plugin-prettier": "catalog:tooling-stack",
-    "husky": "catalog:",
     "jiti": "catalog:tooling-stack",
     "kill-port": "catalog:",
-    "lint-staged": "catalog:",
+    "lefthook": "catalog:",
     "prettier": "catalog:tooling-stack",
     "rimraf": "catalog:",
     "tsx": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:tooling-stack"
-  },
-  "lint-staged": {
-    "**/*.{js,mjs,ts}": [
-      "eslint --fix --no-warn-ignored"
-    ],
-    "**/*.{json,yaml,yml,md}": [
-      "prettier --write --ignore-path .prettierignore"
-    ]
   }
 }
