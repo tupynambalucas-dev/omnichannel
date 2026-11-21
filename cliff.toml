@@ -7,12 +7,7 @@ repo = "omnichannel"
 
 [changelog]
 header = """
-# Changelog - tupynambalucas-dev/omnichannel
-
-All notable changes to the `omnichannel` commercial SaaS platform will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+# Changelog - @tupynambalucas-dev/omnichannel
 
 <!-- changelog-start -->
 """
@@ -28,12 +23,21 @@ body = """
         {%- set raw_first = commit.raw_message | split(pat="\n") | first | trim -%}
         {%- if commit.remote.pr_number -%}
             {%- set clean_msg = raw_first | replace(from=" (#" ~ commit.remote.pr_number ~ ")", to="") -%}
-        - [{{ clean_msg }} #{{ commit.remote.pr_number }}](https://github.com/tupynambalucas-dev/omnichannel/pull/{{ commit.remote.pr_number }}){% if commit.remote.username %} ([@{{ commit.remote.username }}](https://github.com/{{ commit.remote.username }})){% endif %}
+        - [#{{ commit.remote.pr_number }}](https://github.com/tupynambalucas-dev/omnichannel/pull/{{ commit.remote.pr_number }}) {{ clean_msg }}{% if commit.remote.username %} ([@{{ commit.remote.username }}](https://github.com/{{ commit.remote.username }})){% endif %}
         {%- else -%}
-        - [{{ raw_first }} ({{ commit.id | truncate(length=7, end="") }})](https://github.com/tupynambalucas-dev/omnichannel/commit/{{ commit.id }}){% if commit.remote.username %} ([@{{ commit.remote.username }}](https://github.com/{{ commit.remote.username }})){% endif %}
+        - [{{ commit.id | truncate(length=7, end="") }}](https://github.com/tupynambalucas-dev/omnichannel/commit/{{ commit.id }}) {{ raw_first }}{% if commit.remote.username %} ([@{{ commit.remote.username }}](https://github.com/{{ commit.remote.username }})){% endif %}
         {%- endif %}
     {% endfor %}
-{% endfor %}
+{% endfor -%}
+{%- set committers = commits | filter(attribute="remote.username") | group_by(attribute="remote.username") -%}
+{%- if committers | length > 0 %}
+
+### Committers: {{ committers | length }}
+{% for username, user_commits in committers %}
+{%- set last_commit = user_commits | last -%}
+- {{ last_commit.author.name }} ([@{{ username }}](https://github.com/{{ username }}))
+{% endfor -%}
+{%- endif %}
 """
 trim = true
 
@@ -49,12 +53,11 @@ commit_parsers = [
     { message = "^docs", group = "Documentation & Specifications" },
     { message = "^security", group = "Security & Vulnerability Patches" },
     { message = "^revert", group = "Reverts & Rollbacks" },
+    { message = "^chore\\(deps.*\\)", group = "Dependencies" },
     { message = "^chore\\(release\\)", skip = true },
-    { message = "^chore", skip = true },
-    { message = "^test", skip = true },
-    { message = "^ci", skip = true },
+    { message = "^chore: release", skip = true },
+    { message = "^(chore|build|ci|test)", group = "Maintenance" },
     { message = "^style", skip = true },
-    { message = "^build", skip = true },
 ]
 protect_breaking_commits = false
 filter_commits = false
