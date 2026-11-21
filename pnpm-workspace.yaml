@@ -24,8 +24,7 @@ catalog:
   rimraf: ^6.1.4
   turbo: ^2.11.11
   kill-port: ^2.0.1
-  husky: ^9.1.7
-  lint-staged: ^17.5.1
+  lefthook: ^1.11.3
 
 catalogs:
   tooling-stack:
